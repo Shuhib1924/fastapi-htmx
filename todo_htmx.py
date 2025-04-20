@@ -2,7 +2,6 @@ from fastapi import Depends, FastAPI, Form, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
 from sqlmodel import Field, Session, SQLModel, create_engine
 
 app = FastAPI()
@@ -92,3 +91,41 @@ async def root(request: Request, todo: Todo = Depends(get_session)):
     return templates.TemplateResponse(
         "index.html", {"request": request, "todos": todos}
     )
+
+
+# @app.put("/toggle/{todo_id}", response_class=HTMLResponse)
+# async def toggle1(
+#     request: Request, session: Session = Depends(get_session), todo_id: int = None
+# ):
+#     print("toggle", todo_id)
+#     todo = session.query(Todo).get(todo_id)
+#     if not todo:
+#         return "div>not found</div>"
+#     # if todo.completed:
+#     #     todo.completed = False
+#     # else:
+#     #     todo.completed = True
+#     todo.completed = not todo.completed
+#     session.add(todo)
+#     session.commit()
+#     session.refresh(todo)
+#     return templates.TemplateResponse("task.html", {"request": request, "todo": todo})
+
+
+@app.put("/toggle", response_class=HTMLResponse)
+async def toggle2(request: Request, session: Session = Depends(get_session)):
+    try:
+        data = await request.json()
+    except Exception:
+        data = dict(await request.form())
+        print("data", data)
+    todo_id = int(data.get("id"))
+    todo = session.query(Todo).get(todo_id)
+    if not todo:
+        return "<div>not found</div>"
+    todo.completed = not todo.completed
+    print("class", todo)
+    session.add(todo)
+    session.commit()
+    session.refresh(todo)
+    return templates.TemplateResponse("task.html", {"request": request, "todo": todo})

@@ -1,1 +1,6 @@
-<li>{{ todo.task }} (Priority: {{ todo.priority }}) {% if todo.completed %}[Done]{% endif %}</li>
+<li id="li-{{todo.id}}">
+        <input hx-put="/toggle" hx-target="#li-{{todo.id}}" hx-swap="outerHTML" hx-trigger="change" hx-vals='{"id" : "{{todo.id}}"}' input type="checkbox" name="completed" id="{{todo.id}}" name="id" {% if todo.completed %} checked {% endif %}>
+        <label for="{{todo.id}}">{{ todo.task }} (Priority: {{ todo.priority }}) </label>
+    <span class="ml-5 font-bold text-green-500">B</span>
+    <span class="ml-5 font-bold text-red-500">D</span>
+</li>
