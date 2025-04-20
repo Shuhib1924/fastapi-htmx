@@ -85,7 +85,7 @@ async def create4(request: Request, session: Session = Depends(get_session)):
     return templates.TemplateResponse("task.html", {"request": request, "todo": todo})
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse, status_code=status.HTTP_200_OK)
 async def root(request: Request, todo: Todo = Depends(get_session)):
     todos = todo.query(Todo).all()
     return templates.TemplateResponse(
@@ -112,7 +112,7 @@ async def root(request: Request, todo: Todo = Depends(get_session)):
 #     return templates.TemplateResponse("task.html", {"request": request, "todo": todo})
 
 
-@app.put("/toggle", response_class=HTMLResponse)
+@app.put("/toggle", response_class=HTMLResponse, status_code=status.HTTP_201_CREATED)
 async def toggle2(request: Request, session: Session = Depends(get_session)):
     try:
         data = await request.json()
@@ -125,6 +125,42 @@ async def toggle2(request: Request, session: Session = Depends(get_session)):
         return "<div>not found</div>"
     todo.completed = not todo.completed
     print("class", todo)
+    session.add(todo)
+    session.commit()
+    session.refresh(todo)
+    return templates.TemplateResponse("task.html", {"request": request, "todo": todo})
+
+
+@app.get("/edit/{todo_id}", response_class=HTMLResponse)
+async def get_form(
+    request: Request, session: Session = Depends(get_session), todo_id: int = None
+):
+    print("edit", todo_id)
+    todo = session.query(Todo).get(todo_id)
+    if not todo:
+        return "<div>not found</div>"
+    return templates.TemplateResponse("edit.html", {"request": request, "todo": todo})
+
+
+@app.patch(
+    "/edit/{todo_id}", response_class=HTMLResponse, status_code=status.HTTP_201_CREATED
+)
+async def edit(
+    request: Request, session: Session = Depends(get_session), todo_id: int = None
+):
+    print("type:", type(todo_id), "todo_id: ", todo_id)
+    try:
+        data = await request.json()
+    except Exception:
+        data = dict(await request.form())
+        print("data", data)
+    todo = session.query(Todo).get(todo_id)
+    print("before", todo)
+    todo = Todo(**data)
+    print("after", todo)
+    if not todo:
+        return "<div>not found</div>"
+    todo.task = data.get("task")
     session.add(todo)
     session.commit()
     session.refresh(todo)
