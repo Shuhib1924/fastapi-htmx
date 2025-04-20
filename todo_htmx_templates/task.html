@@ -2,5 +2,5 @@
         <input hx-put="/toggle" hx-target="#li-{{todo.id}}" hx-swap="outerHTML" hx-trigger="change" hx-vals='{"id" : "{{todo.id}}"}' input type="checkbox" name="completed" id="{{todo.id}}" name="id" {% if todo.completed %} checked {% endif %}>
         <label for="{{todo.id}}">{{ todo.task }} (Priority: {{ todo.priority }}) </label>
     <span class="ml-5 font-bold text-green-500 cursor-pointer" hx-get="/edit/{{todo.id}}" hx-target="#li-{{todo.id}}" hx-swap="outerHTML">B</span>
-    <span class="ml-5 font-bold text-red-500">D</span>
+    <span class="ml-5 font-bold text-red-500 cursor-pointer" hx-delete="/delete/{{todo.id}}" hx-target="#li-{{todo.id}}" hx-swap="outerHTML">D</span>
 </li>

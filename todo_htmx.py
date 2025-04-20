@@ -165,3 +165,20 @@ async def edit(
     session.commit()
     session.refresh(todo)
     return templates.TemplateResponse("task.html", {"request": request, "todo": todo})
+
+
+@app.delete(
+    "/delete/{todo_id}",
+    response_class=HTMLResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def delete(
+    request: Request, session: Session = Depends(get_session), todo_id: int = None
+):
+    print("delete", todo_id)
+    todo = session.query(Todo).get(todo_id)
+    if not todo:
+        return "<div>not found</div>"
+    session.delete(todo)
+    session.commit()
+    return '<div class="text-red-500">deleted</div>'
