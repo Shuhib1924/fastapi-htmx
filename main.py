@@ -29,3 +29,12 @@ async def get_single(id: int):
         if todo["id"] == id:
             return todo
     return JSONResponse(status_code=404, content={"message": "Item not found"})
+
+
+@app.put("/update/{id}")
+async def update_item(id: int, name: str):
+    for todo in todos:
+        if todo["id"] == id:
+            todo["name"] = name
+            return todo
+    return JSONResponse(status_code=404, content={"message": "Item not found"})
