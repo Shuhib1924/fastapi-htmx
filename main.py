@@ -38,3 +38,12 @@ async def update_item(id: int, name: str):
             todo["name"] = name
             return todo
     return JSONResponse(status_code=404, content={"message": "Item not found"})
+
+
+@app.delete("/delete/{id}")
+async def delete_item(id: int):
+    for todo in todos:
+        if todo["id"] == id:
+            todos.remove(todo)
+            return JSONResponse(status_code=201, content={"message": "Item deleted"})
+    return JSONResponse(status_code=404, content={"message": "Item not found"})
