@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -20,3 +21,11 @@ async def create_item(name: str):
 @app.get("/")
 async def get_all():
     return todos
+
+
+@app.get("/single/{id}")
+async def get_single(id: int):
+    for todo in todos:
+        if todo["id"] == id:
+            return todo
+    return JSONResponse(status_code=404, content={"message": "Item not found"})
