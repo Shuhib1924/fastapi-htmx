@@ -1,7 +1,27 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from sqlmodel import Field, Session, SQLModel, create_engine
 
 app = FastAPI()
+
+
+class Todo(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True)
+    name: str
+    completed: bool = Field(default=False)
+    priority: int = Field(default=0)
+
+
+engine = create_engine(
+    "sqlite:///database.db", connect_args={"check_same_thread": False}
+)
+SQLModel.metadata.create_all(engine)
+
+
+def get_session():
+    with Session(engine) as session:
+        yield session
+
 
 # todos = [{'id': 1, 'name': 'Learn FastAPI'}, {'id': 2, 'name': 'Build an API'}]
 
