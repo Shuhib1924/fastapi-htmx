@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+        <script src="https://unpkg.com/htmx.org"></script>
+        <style type="text/tailwindcss">
+            input {
+                @apply border-2 border-gray-300 rounded-lg p-2;
+            }
+        </style>
+        <title>Document</title>
+    </head>
+    <body>
+        <div class="p-5 space-y-4">
+            <form class="flex gap-4"
+                  hx-post="/create"
+                  hx-target="#t1"
+                  hx-swap="beforeend"
+                  hx-on::after-request="this.reset()">
+                <input type="text"
+                       name="name"
+                       placeholder="Enter a task"
+                       class="flex-1"
+                       required>
+                <button class="bg-green-500 text-white p-2 rounded-lg">add</button>
+            </form>
+            <hr>
+            <div id="t1">{% include "todo_list.html" %}</div>
+        </div>
+    </body>
+</html>
