@@ -1,0 +1,21 @@
+<form class="flex gap-4 w-full p-2"
+      hx-put="/edit/{{ todo.id }}"
+      hx-trigger="submit"
+      hx-target="#edit-{{ todo.id }}"
+      hx-swap="outerHTML"
+      hx-on::after-request="this.reset()"
+      id="edit-{{ todo.id }}">
+    <input type="text"
+           name="name"
+           value="{{ todo.name }}"
+           placeholder="Enter a task"
+           class="flex-1 w-full"
+           required>
+    <input type="number"
+           name="priority"
+           value="{{ todo.priority }}"
+           placeholder="Enter a number"
+           class="flex-1 w-full"
+           required>
+    <button class="bg-yellow-500 text-white p-2 rounded-lg" type="submit">edit</button>
+</form>

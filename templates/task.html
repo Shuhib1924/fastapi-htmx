@@ -10,4 +10,8 @@
     </div>
     <span>{{ todo.priority }}</span>
     <button class="text-blue-500" hx-get="/all" hx-target="#t1">B</button>
+    <button class="text-yellow-500"
+            hx-get="/form/{{ todo.id }}"
+            hx-target="#todo-{{ todo.id }}"
+            hx-swap="outerHTML">E</button>
 </div>

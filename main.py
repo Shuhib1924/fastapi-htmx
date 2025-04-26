@@ -87,6 +87,36 @@ async def toggle(
     return templates.TemplateResponse("task.html", {"request": request, "todo": todo})
 
 
+@app.get("/form/{id}", response_class=HTMLResponse, status_code=200)
+async def form(
+    request: Request, session: Session = Depends(get_session), id: int = None
+):
+    todo = session.query(Todo).get(id)
+    if todo:
+        return templates.TemplateResponse(
+            "form.html", {"request": request, "todo": todo}
+        )
+    return JSONResponse(status_code=404, content={"message": "Task not found"})
+
+
+@app.put("/edit/{id}", response_class=HTMLResponse, status_code=201)
+async def edit(
+    request: Request, session: Session = Depends(get_session), id: int = None
+):
+    todo = session.query(Todo).get(id)
+    print("before", todo)
+    if not todo:
+        return JSONResponse(status_code=404, content={"message": "Task not found"})
+    data = dict(await request.form())
+    todo.name = data.get("name")
+    todo.priority = data.get("priority")
+    session.add(todo)
+    session.commit()
+    session.refresh(todo)
+    print("after", todo)
+    return templates.TemplateResponse("task.html", {"request": request, "todo": todo})
+
+
 # @app.post("/create", response_class=HTMLResponse, status_code=201)
 # async def create(request: Request, session: Session = Depends(get_session)):
 #     print("Received new task:", dict(await request.form()))
