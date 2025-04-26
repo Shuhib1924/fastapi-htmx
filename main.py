@@ -117,6 +117,21 @@ async def edit(
     return templates.TemplateResponse("task.html", {"request": request, "todo": todo})
 
 
+@app.delete("/delete/{id}", response_class=HTMLResponse, status_code=201)
+async def delete(
+    request: Request, session: Session = Depends(get_session), id: int = None
+):
+    todo = session.query(Todo).get(id)
+    if not todo:
+        return JSONResponse(status_code=404, content={"message": "Task not found"})
+    session.delete(todo)
+    session.commit()
+    todos = session.query(Todo).all()
+    return templates.TemplateResponse(
+        "todo_list.html", {"request": request, "todos": todos}
+    )
+
+
 # @app.post("/create", response_class=HTMLResponse, status_code=201)
 # async def create(request: Request, session: Session = Depends(get_session)):
 #     print("Received new task:", dict(await request.form()))

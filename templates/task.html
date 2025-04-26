@@ -14,4 +14,7 @@
             hx-get="/form/{{ todo.id }}"
             hx-target="#todo-{{ todo.id }}"
             hx-swap="outerHTML">E</button>
+    <button class="text-red-500"
+            hx-delete="/delete/{{ todo.id }}"
+            hx-target="#t1">D</button>
 </div>
