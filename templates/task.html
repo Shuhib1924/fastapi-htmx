@@ -1,1 +1,6 @@
-<div>{{ todo.id }}. {{ todo.name }} - {{ todo.priority }}</div>
+<div class="flex justify-evenly items-center p-2 border-b-2">
+    <a hx-get="/task/{{ todo.id }}" hx-target="#t1">{{ todo.id }}. {{ todo.name }}</a>
+    -
+    <span>{{ todo.priority }}</span>
+    <button class="text-blue-500" hx-get="/all" hx-target="#t1">B</button>
+</div>

@@ -27,7 +27,7 @@
                 <button class="bg-green-500 text-white p-2 rounded-lg">add</button>
             </form>
             <hr>
-            <div id="t1">{% include "todo_list.html" %}</div>
+            <div hx-get="/all" hx-trigger="revealed" id="t1">{% include "todo_list.html" %}</div>
         </div>
     </body>
 </html>

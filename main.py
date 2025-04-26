@@ -47,11 +47,28 @@ async def create_todo(request: Request, session: Session = Depends(get_session))
 
 
 @app.get("/", response_class=HTMLResponse, status_code=200)
+async def root(request: Request, session: Session = Depends(get_session)):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.get("/all", response_class=HTMLResponse, status_code=200)
 async def get_all_tasks(request: Request, session: Session = Depends(get_session)):
     todos = session.query(Todo).all()
     return templates.TemplateResponse(
-        "index.html", {"request": request, "todos": todos}
+        "todo_list.html", {"request": request, "todos": todos}
     )
+
+
+@app.get("/task/{id}", response_class=HTMLResponse, status_code=200)
+async def get_single_task(
+    request: Request, id: int, session: Session = Depends(get_session)
+):
+    todo = session.query(Todo).get(id)
+    if todo:
+        return templates.TemplateResponse(
+            "task.html", {"request": request, "todo": todo}
+        )
+    return JSONResponse(status_code=404, content={"message": "Task not found"})
 
 
 # @app.post("/create", response_class=HTMLResponse, status_code=201)
