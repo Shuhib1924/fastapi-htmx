@@ -71,6 +71,22 @@ async def get_single_task(
     return JSONResponse(status_code=404, content={"message": "Task not found"})
 
 
+@app.patch("/toggle/{id}", response_class=HTMLResponse, status_code=201)
+async def toggle(
+    request: Request, session: Session = Depends(get_session), id: int = None
+):
+    todo = session.query(Todo).get(id)
+    if not todo:
+        return JSONResponse(status_code=404, content={"message": "Task not found"})
+    print("todo", todo)
+    todo.completed = not todo.completed
+    print("todo", todo)
+    session.add(todo)
+    session.commit()
+    session.refresh(todo)
+    return templates.TemplateResponse("task.html", {"request": request, "todo": todo})
+
+
 # @app.post("/create", response_class=HTMLResponse, status_code=201)
 # async def create(request: Request, session: Session = Depends(get_session)):
 #     print("Received new task:", dict(await request.form()))
